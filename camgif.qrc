@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/sys_button_close.png</file>
+        <file>image/sys_button_restore.png</file>
+        <file>css/camgif.css</file>
+    </qresource>
+</RCC>

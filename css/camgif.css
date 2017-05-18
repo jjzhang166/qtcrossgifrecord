@@ -1,0 +1,25 @@
+*{
+	font: 12pt "Î¢ÈíÑÅºÚ";
+}
+QLabel{
+        background-color: #00BBE3;
+	border:none;
+	color:white;
+}
+#DDRightFrame,#topFrame{
+        background-color: #00BBE3;
+}
+#MidLabel{
+        background-color: transparent;
+}
+#recordBtn,#saveToGif,#gifPath,#EditBtn,#frameBtn {
+      border: 1px solid #323640;
+      border-radius: 2px;
+      background-color: #464b5a;
+      color:white;
+      min-width: 80px;
+      min-height:30px;
+  }
+  #recordBtn:pressed,#saveToGif:pressed,#gifPath:pressed,#EditBtn:pressed,#frameBtn:pressed {
+      background-color: #164b5a;
+  }
