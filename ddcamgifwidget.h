@@ -58,6 +58,7 @@ private:
     QString mFilePath;
     bool mIsStore{false};
     void winAPIonTop();
+    QImage *cool(int delta, QImage *origin);
 };
 
 #endif // DDCAMGIFWIDGET_H

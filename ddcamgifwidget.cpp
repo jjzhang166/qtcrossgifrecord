@@ -60,23 +60,13 @@ void DDCamGifWidget::initGifObj(const QString& fileName)
     QGifImage mGifObj;
     QVector<QRgb> ctable;
     ctable << qRgb(255, 255, 255)
-              //           << qRgb(0, 0, 0)
-              //           << qRgb(255, 0, 0)
-              //           << qRgb(0, 255, 0)
-              //           << qRgb(0, 0, 255)
-              //           << qRgb(255, 255, 0)
-           << qRgb(10, 205, 205)
+           << qRgb(110, 205, 205)
            << qRgb(255, 0, 255);
-    if(mIsStore){
-        mGifObj.setGlobalColorTable(ctable, Qt::black);
-    }
+    mGifObj.setGlobalColorTable(ctable, Qt::black);
     mGifObj.setDefaultTransparentColor(Qt::black);
     mGifObj.setDefaultDelay(100);
     mGifObj.clearFrameList();
 
-    //    QString fileName=QDateTime::currentDateTime().toString("yyyyMMdd-hhmmsszzz");
-    //    fileName.append(".gif");
-    //    fileName.prepend("tmp/");
     foreach (QImage img, mAllPixMap) {
         if(&img){
             mGifObj.addFrame(img);
@@ -96,15 +86,22 @@ void DDCamGifWidget::addImage()
     QScreen *screen = QGuiApplication::primaryScreen();
     QPixmap pixmap  = screen->grabWindow(QApplication::desktop()->winId(),point.x(),point.y(),ui->MidLabel->width(),ui->MidLabel->height());
 #endif
+    QImage img = pixmap.toImage();
+    QVector<QRgb> ctable;
+    ctable << qRgb(255, 255, 255)
+           << qRgb(10, 205, 205)
+           << qRgb(255, 0, 255);
+    img.setDevicePixelRatio(0.5);
+    //    qDebug()<<Q_FUNC_INFO<<&pixmap<<" img "<<&img;
     if(mIsStore){
         QString fileName=QDateTime::currentDateTime().toString("yyyyMMdd-hhmmsszzz");
         fileName.append(".png");
-        fileName.prepend("tmp/");
-        pixmap.save(fileName);
+        fileName.prepend("./tmp/");
+        bool ok = img.save(fileName);
+//        qDebug()<<Q_FUNC_INFO<<fileName<<" ok ?"<<ok;
     }
-    QImage img = pixmap.toImage();
-    //    qDebug()<<Q_FUNC_INFO<<&pixmap<<" img "<<&img;
-    mAllPixMap.append(img);
+    QImage *tmpImg = cool(60,&img);
+    mAllPixMap.append(*tmpImg);
 }
 
 DDCamGifWidget::~DDCamGifWidget()
@@ -222,4 +219,27 @@ void DDCamGifWidget::winAPIonTop()
             SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOSIZE | SWP_SHOWWINDOW);
         }
 #endif
+}
+QImage * DDCamGifWidget::cool(int delta, QImage * origin){
+    QImage *newImage = new QImage(origin->width(), origin->height(), QImage::Format_ARGB32);
+
+    QColor oldColor;
+    int r,g,b;
+
+    for(int x=0; x<newImage->width(); x++){
+        for(int y=0; y<newImage->height(); y++){
+            oldColor = QColor(origin->pixel(x,y));
+
+            r = oldColor.red();
+            g = oldColor.green();
+            b = oldColor.blue()+delta;
+
+            //we check if the new value is between 0 and 255
+            b = qBound(0, b, 255);
+
+            newImage->setPixel(x,y, qRgb(r,g,b));
+        }
+    }
+
+    return newImage;
 }
